@@ -6,7 +6,6 @@ from src.database import engine, Base
 from src.routers import (
     users,
     cars,
-    ai_preventive_maintenance,
     orders,
     transactions,
     spare_parts,
@@ -19,12 +18,17 @@ from src.routers import (
     auth,
 )
 
+
+from .routers import predict
+
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Rapid_Rescue FastAPI Project",
     description="A complete FastAPI backend with multiple routers.",
     version="1.0.0"
 )
+
 
 # Create tables in the database
 try:
@@ -43,8 +47,8 @@ app.include_router(order_services.router) # under test
 app.include_router(order_parts.router) # under test
 app.include_router(orders.router) # under test
 app.include_router(service_providers.router) # under test
-app.include_router(ai_preventive_maintenance.router) # under test
 app.include_router(transactions.router) # under test
+app.include_router(predict.router)
 
 # Define the root endpoint
 @app.get("/", tags=["Root"])

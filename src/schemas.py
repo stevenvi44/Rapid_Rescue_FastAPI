@@ -11,7 +11,7 @@ class UserBase(BaseModel):
     email: EmailStr
     phone_number: Annotated[str, StringConstraints(pattern=r"^(\+20|0)?(10|11|12|15)[0-9]{8}$", max_length=13)] # regular expression EGY
     location: str
-    role: str 
+    role: str
 
 class UserCreate(UserBase): # This field is not in UserBase since we don’t want to expose it in responses
     password: Annotated[str, StringConstraints(min_length=8, pattern=r"^[A-Za-z\d@#$%^&+=!]{8,}$")] # (A-Z), (a-z), (0-9), (@#$%^&+=! or similar), Minimum 8 characters
@@ -23,16 +23,16 @@ class UserUpdate(BaseModel):
     location: Optional[str] = None
     role: Optional[str] = None
     password: Optional[Annotated[str, StringConstraints(min_length=8, pattern=r"^[A-Za-z\d@#$%^&+=!]{8,}$")]] = None
-    reset_token: Optional[str] = None 
-    
+    reset_token: Optional[str] = None
+
     class Config:
         from_attributes = True  # Enables ORM-like behavior for SQLAlchemy models
 
 class UserResponse(UserBase):
     user_id: int
     reset_token: Optional[str] = None
-    is_active: bool 
-    
+    is_active: bool
+
     class Config:
         from_attributes = True
 
@@ -113,7 +113,7 @@ class OrderBase(BaseModel):
     total_cost: Decimal = Field(ge=0)  # Ensure cost is non-negative
 
 class OrderCreate(OrderBase):
-    pass  
+    pass
 
 class OrderUpdate(BaseModel):
     user_id: Optional[int] = None
@@ -128,7 +128,8 @@ class OrderUpdate(BaseModel):
 class OrderResponse(OrderBase):
     order_id: int
     class Config:
-        from_attributes = True  
+        from_attributes = True
+
 
 # OrderService Schema
 class OrderServiceBase(BaseModel):
@@ -185,7 +186,7 @@ class SparePartBase(BaseModel):
     name: str = Field(max_length=100)
     description: str
     price: Decimal = Field(ge=0, decimal_places=2)
-    availability_status: AvailabilityStatus  
+    availability_status: AvailabilityStatus
     photo_url: Optional[HttpUrl] = None
 
 class SparePartCreate(SparePartBase):
@@ -196,7 +197,7 @@ class SparePartUpdate(BaseModel):
     name: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = None
     price: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
-    availability_status: Optional["AvailabilityStatus"] = None  
+    availability_status: Optional["AvailabilityStatus"] = None
     photo_url: Optional[HttpUrl] = None
 
     class Config:
@@ -276,78 +277,6 @@ class ServiceRequestResponse(ServiceRequestBase):
     class Config:
         from_attributes = True
 
-# AI Preventive Maintenance Schema
-class AIPreventiveMaintenanceBase(BaseModel):
-    user_car_id: int
-    request_id: int
-    predicted_issue: Optional[str] = Field(None, max_length=255)
-    recommendation: Optional[str] = Field(None, max_length=255)
-    last_checkup_date: Optional[date] = None
-    next_checkup_date: Optional[date] = None
-
-    @model_validator(mode="before") # Runs before Pydantic's built-in validation
-    @classmethod
-    def validate_checkup_dates(cls, values): # cls Refers to the class itself (since it's a @classmethod).
-        try:
-            last_checkup_date = values["last_checkup_date"]
-            next_checkup_date = values["next_checkup_date"]
-        except KeyError:
-            raise ValueError("Missing required checkup date fields.")
-
-        # Convert Strings to date Objects (If Needed)
-        if isinstance(last_checkup_date, str):
-            last_checkup_date = datetime.strptime(last_checkup_date, "%Y-%m-%d").date()
-            values["last_checkup_date"] = last_checkup_date  # Update parsed value
-
-        if isinstance(next_checkup_date, str):
-            next_checkup_date = datetime.strptime(next_checkup_date, "%Y-%m-%d").date()
-            values["next_checkup_date"] = next_checkup_date  # Update parsed value
-
-        # Validation check
-        if last_checkup_date and next_checkup_date and next_checkup_date <= last_checkup_date:
-            raise ValueError("Next checkup date must be after last checkup date.")
-
-        return values
-
-class AIPreventiveMaintenanceCreate(AIPreventiveMaintenanceBase):
-    pass
-
-class AIPreventiveMaintenanceUpdate(BaseModel):
-    user_car_id: Optional[int] = None
-    request_id: Optional[int] = None
-    predicted_issue: Optional[str] = Field(None, max_length=255)
-    recommendation: Optional[str] = Field(None, max_length=255)
-    last_checkup_date: Optional[date] = None
-    next_checkup_date: Optional[date] = None
-
-    @model_validator(mode="before")
-    @classmethod
-    def validate_checkup_dates(cls, values):
-        last_checkup_date = values.get("last_checkup_date")
-        next_checkup_date = values.get("next_checkup_date")
-
-        # Convert Strings to date Objects (If Needed)
-        if isinstance(last_checkup_date, str):
-            last_checkup_date = datetime.strptime(last_checkup_date, "%Y-%m-%d").date()
-            values["last_checkup_date"] = last_checkup_date  
-
-        if isinstance(next_checkup_date, str):
-            next_checkup_date = datetime.strptime(next_checkup_date, "%Y-%m-%d").date()
-            values["next_checkup_date"] = next_checkup_date  
-
-        # Validation check
-        if last_checkup_date and next_checkup_date and next_checkup_date <= last_checkup_date:
-            raise ValueError("Next checkup date must be after last checkup date.")
-
-        return values
-
-    class Config:
-        from_attributes = True  
-
-class AIPreventiveMaintenanceResponse(AIPreventiveMaintenanceBase):
-    maintenance_id: int
-    class Config:
-        from_attributes = True
 
 # Transaction Schema
 class PaymentMethod(str, Enum):
@@ -403,6 +332,7 @@ class CarsSparePartsResponse(CarsSparePartsBase):
     class Config:
         from_attributes = True
 
+
 # ------------------- Verify Email Schema -------------------
 class VerifyCode(BaseModel):
     email: EmailStr
@@ -417,3 +347,25 @@ class ResetPasswordRequest(BaseModel):
     email: EmailStr
     code: str  # 6-digit reset code
     new_password: str
+
+
+# AI schema
+class FeatureRanges(BaseModel):
+    """Custom ranges for each feature"""
+    engine_rpm: tuple[float, float]
+    lub_oil_pressure: tuple[float, float]
+    fuel_pressure: tuple[float, float]
+    coolant_pressure: tuple[float, float]
+    lub_oil_temp: tuple[float, float]
+    coolant_temp: tuple[float, float]
+    temp_difference: tuple[float, float]
+
+class FeatureDescriptions(BaseModel):
+    """Descriptions for each feature"""
+    engine_rpm: str
+    lub_oil_pressure: str
+    fuel_pressure: str
+    coolant_pressure: str
+    lub_oil_temp: str
+    coolant_temp: str
+    temp_difference: str
