@@ -10,7 +10,6 @@ driver = 'ODBC Driver 17 for SQL Server'
 # Connection string
 DATABASE_URL = f"mssql+pyodbc://@{server}/{database}?driver={quote_plus(driver)}&trusted_connection=yes"
 
-# the engine
 engine = create_engine(DATABASE_URL)
 
 # provides a connection to interact with the database and perform queries, inserts, updates, and deletions.
