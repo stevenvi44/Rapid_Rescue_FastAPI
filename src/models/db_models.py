@@ -122,6 +122,7 @@ class ServiceProvider(_database.Base):
     contact_person = _sql.Column(_sql.String(100), nullable=False)
     other_details = _sql.Column(_sql.Text, nullable=True)
     filtering = _sql.Column(_sql.String(50), nullable=False)
+    location2 = _sql.Column(_sql.String(255), nullable=False)
 
     service_requests = _orm.relationship("ServiceRequest", back_populates="service_provider")
     spare_parts = _orm.relationship("SparePart", back_populates="service_provider")

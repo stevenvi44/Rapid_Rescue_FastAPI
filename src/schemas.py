@@ -217,6 +217,8 @@ class ServiceProviderBase(BaseModel):
     contact_person: str = Field(max_length=100)
     other_details: Optional[str] = None
     filtering: str = Field(max_length=50)
+    location2: str = Field(max_length=255)
+
 
 class ServiceProviderCreate(ServiceProviderBase):
     pass
@@ -229,6 +231,7 @@ class ServiceProviderUpdate(BaseModel):
     contact_person: Optional[str] = Field(None, max_length=100)
     other_details: Optional[str] = None
     filtering: str = Field(max_length=50)
+    location2: Optional[str] = Field(None, max_length=255)
 
     class Config:
         from_attributes = True
