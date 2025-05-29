@@ -1,7 +1,7 @@
 # Rapid Rescue - Comprehensive Car Owner Support App
 
 ## Overview
-RoadAssist Pro is a comprehensive mobile application designed to provide essential services for car owners in times of need. The app offers:
+Rapid Rescue is a comprehensive mobile application designed to provide essential services for car owners in times of need. The app offers:
 - 24/7 roadside assistance with recovery vehicle dispatch
 - Emergency breakdown support
 - Car spare parts marketplace for on-site repairs
