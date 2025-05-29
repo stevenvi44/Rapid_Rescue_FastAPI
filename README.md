@@ -1,4 +1,4 @@
-# RoadAssist Pro - Comprehensive Car Owner Support App
+# Rapid Rescue - Comprehensive Car Owner Support App
 
 ## Overview
 RoadAssist Pro is a comprehensive mobile application designed to provide essential services for car owners in times of need. The app offers:
